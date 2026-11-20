@@ -56,17 +56,13 @@ class WelcomeScreen extends ConsumerWidget {
                       ],
                     ),
                     child: Center(
-                      child: Container(
-                        width: 46,
-                        height: 46,
-                        decoration: BoxDecoration(
-                          color: palette.sageSurface,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Icon(
-                          Icons.account_balance_wallet_rounded,
-                          color: palette.sageText,
-                          size: 26,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.asset(
+                          'assets/images/pockiva_logo.png',
+                          width: 54,
+                          height: 54,
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),

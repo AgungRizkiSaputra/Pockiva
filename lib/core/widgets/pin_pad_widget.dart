@@ -13,6 +13,7 @@ class PinPadWidget extends StatelessWidget {
     required this.onBackspacePressed,
     this.isBusy = false,
     this.errorText,
+    this.leftBottomAction,
   });
 
   final int pinLength;
@@ -20,6 +21,7 @@ class PinPadWidget extends StatelessWidget {
   final VoidCallback onBackspacePressed;
   final bool isBusy;
   final String? errorText;
+  final Widget? leftBottomAction;
 
   static const _subLabels = {
     '1': '',
@@ -161,7 +163,13 @@ class PinPadWidget extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(width: 80, height: 60),
+                  leftBottomAction != null
+                      ? SizedBox(
+                          width: 80,
+                          height: 60,
+                          child: Center(child: leftBottomAction),
+                        )
+                      : const SizedBox(width: 80, height: 60),
                   _KeypadButton(
                     label: '0',
                     subLabel: _subLabels['0'] ?? '',

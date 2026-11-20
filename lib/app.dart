@@ -49,7 +49,7 @@ class _TabunganPribadiAppState extends ConsumerState<TabunganPribadiApp>
       onPointerSignal: (_) =>
           ref.read(authControllerProvider.notifier).recordUserActivity(),
       child: MaterialApp.router(
-        title: 'Tabungan Pribadi',
+        title: 'Pockiva',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light(),
         darkTheme: AppTheme.dark(),

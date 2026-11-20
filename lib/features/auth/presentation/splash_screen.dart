@@ -15,61 +15,97 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
+    with TickerProviderStateMixin {
+  late final AnimationController _entranceController;
+  late final AnimationController _exitController;
+
   late final Animation<double> _scaleAnimation;
   late final Animation<double> _fadeAnimation;
   late final Animation<double> _textFadeAnimation;
   late final Animation<double> _glowAnimation;
 
+  late final Animation<double> _exitFadeAnimation;
+  late final Animation<double> _exitScaleAnimation;
+
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    _entranceController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1400),
+      duration: const Duration(milliseconds: 2000),
+    );
+
+    _exitController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
     );
 
     _scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
       CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.7, curve: Curves.easeOutCubic),
+        parent: _entranceController,
+        curve: const Interval(0.0, 0.65, curve: Curves.easeOutCubic),
       ),
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+        parent: _entranceController,
+        curve: const Interval(0.0, 0.45, curve: Curves.easeOut),
       ),
     );
 
     _textFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.35, 0.85, curve: Curves.easeOut),
+        parent: _entranceController,
+        curve: const Interval(0.35, 0.80, curve: Curves.easeOut),
       ),
     );
 
-    _glowAnimation = Tween<double>(begin: 0.3, end: 0.9).animate(
+    _glowAnimation = Tween<double>(begin: 0.3, end: 0.95).animate(
       CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.2, 0.9, curve: Curves.easeInOut),
+        parent: _entranceController,
+        curve: const Interval(0.15, 0.90, curve: Curves.easeInOut),
       ),
     );
 
-    _controller.addStatusListener((status) {
+    _exitFadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: _exitController,
+        curve: Curves.easeInOutCubic,
+      ),
+    );
+
+    _exitScaleAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(
+        parent: _exitController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+
+    _entranceController.addStatusListener((status) {
+      if (status == AnimationStatus.completed && mounted) {
+        // Hold on screen for 1.4 seconds before initiating smooth exit dissolve
+        Future.delayed(const Duration(milliseconds: 1400), () {
+          if (mounted) {
+            _exitController.forward();
+          }
+        });
+      }
+    });
+
+    _exitController.addStatusListener((status) {
       if (status == AnimationStatus.completed && mounted) {
         ref.read(splashDoneProvider.notifier).state = true;
       }
     });
 
-    _controller.forward();
+    _entranceController.forward();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _entranceController.dispose();
+    _exitController.dispose();
     super.dispose();
   }
 
@@ -82,8 +118,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     return Scaffold(
       backgroundColor: palette.background,
       body: SafeArea(
-        child: Stack(
-          children: [
+        child: FadeTransition(
+          opacity: _exitFadeAnimation,
+          child: ScaleTransition(
+            scale: _exitScaleAnimation,
+            child: Stack(
+              children: [
             // Ambient Radial Bioluminescent Glow
             Center(
               child: AnimatedBuilder(
@@ -168,35 +208,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                               ],
                             ),
                             child: Center(
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.account_balance_wallet_rounded,
-                                    size: 42,
-                                    color: palette.sageText,
-                                  ),
-                                  // Radiant beacon spark
-                                  Positioned(
-                                    top: 22,
-                                    right: 20,
-                                    child: Container(
-                                      width: 9,
-                                      height: 9,
-                                      decoration: BoxDecoration(
-                                        color: palette.fabAccent,
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: palette.fabAccent.withValues(alpha: 0.7),
-                                            blurRadius: 8,
-                                            spreadRadius: 1,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(22),
+                                child: Image.asset(
+                                  'assets/images/pockiva_logo.png',
+                                  width: 84,
+                                  height: 84,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),
@@ -212,12 +231,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     child: Column(
                       children: [
                         Text(
-                          'TABUNGAN PRIBADI',
+                          'POCKIVA',
                           style: textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 3.0,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 4.0,
                             color: palette.inkPrimary,
-                            fontSize: 15,
+                            fontSize: 18,
                           ),
                         ),
                         const SizedBox(height: AppTokens.space8),
@@ -232,7 +251,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                             ),
                           ),
                           child: Text(
-                            'Catat Finansial dengan Tenang & Teratur',
+                            'Smart Pocket & Financial Tracker',
                             style: textTheme.bodySmall?.copyWith(
                               color: palette.inkSecondary,
                               letterSpacing: 0.3,
@@ -277,6 +296,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }

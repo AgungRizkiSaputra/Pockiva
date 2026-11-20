@@ -15,5 +15,4 @@ Aplikasi mobile tabungan pribadi (Flutter + Supabase) untuk Gen Z dan Milenial M
 ## Dokumentasi
 
 - [Arsitektur & Keputusan Desain](docs/ARCHITECTURE.md)
-- [Skema Database & Keamanan](docs/SCHEMA_AND_SECURITY.md)
 - [Panduan Konfigurasi & Deployment](docs/DEPLOYMENT.md)

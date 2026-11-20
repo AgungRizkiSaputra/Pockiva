@@ -17,6 +17,28 @@ import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/transactions/presentation/transaction_history_screen.dart';
 import '../widgets/responsive_shell.dart';
 
+CustomTransitionPage<void> _buildFadeTransitionPage({
+  required LocalKey key,
+  required Widget child,
+  Duration duration = const Duration(milliseconds: 600),
+}) {
+  return CustomTransitionPage<void>(
+    key: key,
+    child: child,
+    transitionDuration: duration,
+    reverseTransitionDuration: duration,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeInOutCubic,
+        ),
+        child: child,
+      );
+    },
+  );
+}
+
 class _RouterRefreshNotifier extends ChangeNotifier {
   _RouterRefreshNotifier(Ref ref) {
     ref.listen<AuthControllerState>(authControllerProvider, (_, _) {
@@ -78,31 +100,52 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/splash',
-        builder: (_, _) => const SplashScreen(),
+        pageBuilder: (context, state) => _buildFadeTransitionPage(
+          key: state.pageKey,
+          child: const SplashScreen(),
+        ),
       ),
       GoRoute(
         path: '/unconfigured',
-        builder: (_, _) => const UnconfiguredScreen(),
+        pageBuilder: (context, state) => _buildFadeTransitionPage(
+          key: state.pageKey,
+          child: const UnconfiguredScreen(),
+        ),
       ),
       GoRoute(
         path: '/welcome',
-        builder: (_, _) => const WelcomeScreen(),
+        pageBuilder: (context, state) => _buildFadeTransitionPage(
+          key: state.pageKey,
+          child: const WelcomeScreen(),
+        ),
       ),
       GoRoute(
         path: '/pin-setup',
-        builder: (_, _) => const PinSetupScreen(),
+        pageBuilder: (context, state) => _buildFadeTransitionPage(
+          key: state.pageKey,
+          child: const PinSetupScreen(),
+        ),
       ),
       GoRoute(
         path: '/pin-verify',
-        builder: (_, _) => const PinVerifyScreen(),
+        pageBuilder: (context, state) => _buildFadeTransitionPage(
+          key: state.pageKey,
+          child: const PinVerifyScreen(),
+        ),
       ),
       GoRoute(
         path: '/otp-verify',
-        builder: (_, _) => const OtpVerificationScreen(),
+        pageBuilder: (context, state) => _buildFadeTransitionPage(
+          key: state.pageKey,
+          child: const OtpVerificationScreen(),
+        ),
       ),
       GoRoute(
         path: '/onboarding',
-        builder: (_, _) => const OnboardingScreen(),
+        pageBuilder: (context, state) => _buildFadeTransitionPage(
+          key: state.pageKey,
+          child: const OnboardingScreen(),
+        ),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

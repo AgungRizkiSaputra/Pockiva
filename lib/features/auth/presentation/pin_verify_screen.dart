@@ -73,23 +73,27 @@ class _PinVerifyScreenState extends ConsumerState<PinVerifyScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Profile Avatar Squircle
+                  // Pockiva Official Logo
                   Container(
-                    width: 60,
-                    height: 60,
+                    width: 68,
+                    height: 68,
                     decoration: BoxDecoration(
-                      color: palette.sageSurface,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: palette.sageBorder, width: 1.5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        authState.profile?.initials ?? 'U',
-                        style: textTheme.titleLarge?.copyWith(
-                          color: palette.sageText,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.5,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF2563EB).withValues(alpha: 0.25),
+                          blurRadius: 16,
+                          offset: const Offset(0, 4),
                         ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.asset(
+                        'assets/images/pockiva_logo.png',
+                        width: 68,
+                        height: 68,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -121,20 +125,32 @@ class _PinVerifyScreenState extends ConsumerState<PinVerifyScreen> {
                     errorText: authState.errorMessage,
                     onDigitPressed: _onDigit,
                     onBackspacePressed: _onBackspace,
-                  ),
-                  const SizedBox(height: AppTokens.space12),
-                  TextButton.icon(
-                    key: const Key('forgot_pin_button'),
-                    onPressed: authState.isBusy
-                        ? null
-                        : () => _showForgotPinDialog(context, ref, authState),
-                    icon: const Icon(Icons.help_outline_rounded, size: 16),
-                    label: const Text('Lupa PIN?'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: palette.sageText,
-                      textStyle: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
+                    leftBottomAction: InkWell(
+                      key: const Key('forgot_pin_button'),
+                      onTap: authState.isBusy
+                          ? null
+                          : () => _showForgotPinDialog(context, ref, authState),
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        width: 80,
+                        height: 60,
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Lupa\nPIN?',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: palette.sageText,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                                height: 1.15,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
